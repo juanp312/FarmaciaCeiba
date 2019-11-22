@@ -17,28 +17,35 @@ disableConcurrentBuilds()
  }
  //Aquí comienzan los “items” del Pipeline
  stages{
- stage('Checkout'){
- steps{
- echo "------------>Checkout<------------"
- checkout([
- class: 'GitSCM',
- branches: [[name: '*/master']],
- doGenerateSubmoduleConfigurations: false,
- extensions: [],
- gitTool: 'Git_Centos',
- submoduleCfg: [],
- userRemoteConfigs: [[
- credentialsId: 'GitHub_juanp312',
- url:'https://github.com/juanp312/FarmaciaCeiba'
+    stage('Checkout'){
+    steps{
+    checkout([
+    class: 'GitSCM',
+    branches: [[name: '*/master']],
+    doGenerateSubmoduleConfigurations: false,
+    extensions: [],
+    gitTool: 'Git_Centos',
+    submoduleCfg: [],
+    userRemoteConfigs: [[
+    credentialsId: 'GitHub_juanp312',
+    url:'https://github.com/juanp312/FarmaciaCeiba'
  ]]
  ])
  }
  }
  stage('Compile & Unit Tests') {
- steps{
- echo "------------>Unit Tests<------------"
+    steps{
+    sh 'make check'
+    junit 'reports/**/*.xml'
+   }
  }
+
+ stage('Deploy'){
+    steps{
+    sh 'make publish'
+    }
  }
+
  stage('Static Code Analysis') {
  steps{
  echo '------------>Análisis de código estático<------------'
@@ -50,8 +57,8 @@ type:'hudson.plugins.sonar.SonarRunnerInstallation'}/bin/sonar-scanner
  }
  }
  stage('Build') {
- steps {
- echo "------------>Build<------------"
+    steps {
+    sh 'make'
  }
  }
  }
