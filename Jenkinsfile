@@ -16,11 +16,12 @@ disableConcurrentBuilds()
  gradle 'Gradle4.5_Centos' //Preinstalada en la Configuración del Master
  }
  //Aquí comienzan los “items” del Pipeline
+ stages{
  stage('Checkout'){
  steps{
  echo "------------>Checkout<------------"
  checkout([
- $class: 'GitSCM',
+ class: 'GitSCM',
  branches: [[name: '*/master']],
  doGenerateSubmoduleConfigurations: false,
  extensions: [],
